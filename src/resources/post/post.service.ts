@@ -1,26 +1,44 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePostInput } from './dto/create-post.input';
 import { UpdatePostInput } from './dto/update-post.input';
 
+// Import prisma
+import { PrismaService } from '../../prisma.service'
+import { Post, Prisma } from '@prisma/client'
+
 @Injectable()
 export class PostService {
-  create(createPostInput: CreatePostInput) {
-    return 'This action adds a new post';
+  constructor(private prisma: PrismaService) {}
+
+  async create(createPostInput: CreatePostInput) {
+    return await this.prisma.post.create({ data: createPostInput })
   }
 
-  findAll() {
-    return `This action returns all post`;
+  async findAll(): Promise<Post[]> {
+    return this.prisma.post.findMany({ include: { comments: true } });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} post`;
+  async findOne(postWhereUniqueInput: Prisma.PostWhereUniqueInput): Promise<Post | null> {
+    const findPost = await this.prisma.post.findUnique({ where: postWhereUniqueInput, include: { comments: true } })
+
+    if (!findPost) throw new NotFoundException('Post not found!')
+
+    return findPost
   }
 
-  update(id: number, updatePostInput: UpdatePostInput) {
-    return `This action updates a #${id} post`;
+  async update(id: number, updatePostInput: UpdatePostInput): Promise<Post> {
+    try {
+      return await this.prisma.post.update({ where: { id: id }, data: updatePostInput})
+    } catch (err) {
+      throw new BadRequestException('Post id is not valid!')
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} post`;
+  async remove(id: number) {
+    try {
+      return await this.prisma.post.delete({ where: { id: id } })
+    } catch (err) {
+      throw new BadRequestException('Post id is not valid!')
+    }
   }
 }

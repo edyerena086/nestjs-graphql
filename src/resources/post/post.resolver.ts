@@ -8,28 +8,28 @@ import { UpdatePostInput } from './dto/update-post.input';
 export class PostResolver {
   constructor(private readonly postService: PostService) {}
 
-  @Mutation(() => Post)
-  createPost(@Args('createPostInput') createPostInput: CreatePostInput) {
-    return this.postService.create(createPostInput);
+  @Query(() => [Post], { nullable: 'items', name: 'posts' })
+  async findAll() {
+    return await this.postService.findAll()
   }
 
-  @Query(() => [Post], { name: 'post' })
-  findAll() {
-    return this.postService.findAll();
-  }
-
-  @Query(() => Post, { name: 'post' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.postService.findOne(id);
+  @Query(() => Post, { nullable: true, name: 'post' })
+  async findOne(@Args('id', { type: () => Int }) id: number) {
+    return await this.postService.findOne({ id })
   }
 
   @Mutation(() => Post)
-  updatePost(@Args('updatePostInput') updatePostInput: UpdatePostInput) {
-    return this.postService.update(updatePostInput.id, updatePostInput);
+  async createPost(@Args('payload') createPostInput: CreatePostInput) {
+    return await this.postService.create(createPostInput)
   }
 
   @Mutation(() => Post)
-  removePost(@Args('id', { type: () => Int }) id: number) {
-    return this.postService.remove(id);
+  async updatePost(@Args('payload') updatePostInput: UpdatePostInput) {
+    return await this.postService.update(updatePostInput.id, updatePostInput)
+  }
+
+  @Mutation(() => Post)
+  async removePost(@Args('id', { type: () => Int }) id: number) {
+    return await this.postService.remove(id)
   }
 }

@@ -2,28 +2,100 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Comment {
+  id: Int!
+  author: String!
+  comment: String!
+  post: Post!
+}
+
 type Post {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  id: Int!
+  title: String!
+  text: String!
+  comments: [Comment]
+}
+
+type Brand {
+  id: Int!
+  name: String!
+}
+
+type Car {
+  id: Int!
+  name: String!
+  description: String!
+  brand: Brand!
 }
 
 type Query {
-  post(id: Int!): Post!
+  posts: [Post]!
+  post(id: Int!): Post
+  comments: [Comment]!
+  comment(id: Float!): Comment!
+  brands: [Brand]!
+  brand(id: Int!): Brand
+  cars: [Car]!
+  car(id: Int!): Car
 }
 
 type Mutation {
-  createPost(createPostInput: CreatePostInput!): Post!
-  updatePost(updatePostInput: UpdatePostInput!): Post!
+  createPost(payload: CreatePostInput!): Post!
+  updatePost(payload: UpdatePostInput!): Post!
   removePost(id: Int!): Post!
+  createComment(payload: CreateCommentInput!): Comment!
+  updateComment(payload: UpdateCommentInput!): Comment!
+  removeComment(id: Int!): Comment!
+  createBrand(payload: CreateBrandInput!): Brand!
+  updateBrand(payload: UpdateBrandInput!): Brand!
+  removeBrand(id: Int!): Brand!
+  createCar(payload: CreateCarInput!): Car!
+  updateCar(payload: UpdateCarInput!): Car!
+  removeCar(id: Int!): Car!
 }
 
 input CreatePostInput {
-  """Example field (placeholder)"""
-  exampleField: Int!
+  title: String!
+  text: String!
 }
 
 input UpdatePostInput {
-  """Example field (placeholder)"""
-  exampleField: Int
+  title: String
+  text: String
+  id: Int!
+}
+
+input CreateCommentInput {
+  author: String!
+  comment: String!
+  postId: Int!
+}
+
+input UpdateCommentInput {
+  author: String
+  comment: String
+  postId: Int
+  id: Int!
+}
+
+input CreateBrandInput {
+  name: String!
+}
+
+input UpdateBrandInput {
+  name: String
+  id: Int!
+}
+
+input CreateCarInput {
+  name: String!
+  description: String!
+  brandId: Int!
+}
+
+input UpdateCarInput {
+  name: String
+  description: String
+  brandId: Int
   id: Int!
 }
